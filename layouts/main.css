@@ -1,0 +1,12 @@
+@font-face {
+    font-family: "IranYekan";
+    src: local("IranYekan"),
+     url(~assets/iranyekanwebregular.ttf) format("truetype");
+}
+
+html {
+    font-family: "IranYekan";
+}
+a:hover {
+    text-decoration: none;
+}

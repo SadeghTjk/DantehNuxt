@@ -1,7 +1,6 @@
 <template>
-  <div class="container">
     <div class="row rtl p-5">
-      <div class="col-12">
+      <div class="col-sm-12">
         <b-form @submit.prevent="getall" >
 
           <b-form-group id="input-group-13" label="آدرس اصلی: " label-for="input-base">
@@ -65,31 +64,39 @@
           </b-form-group>
 
         <b-btn variant="success" id="all" type="submit" class="m-2 mb-4 px-4">دریـــافت</b-btn>
-        <b-btn variant="danger" id="delete" type="reset" @click="del" class="m-2 mb-4 px-3">حـــذف</b-btn>
+        <b-btn variant="danger" id="delete" @click="del" class="m-2 mb-4 px-3">حـــذف</b-btn>
         
         </b-form>
         <!-- <button id="parse" type="submit" @click="update" class="mb-3">شروع</button> -->
         <b-progress class="mb-3" :value="100" variant="info" striped animated v-show="loading"></b-progress>
           <span class="product-container" v-for="(product,index) in productList" :key="index">
-            <b-alert v-if="product.stock == 'OutOfStock'" variant="success" show>
+            <b-alert v-b-toggle.accordion v-if="product.stock == 'OutOfStock'" variant="success" show>
               <b-avatar rounded="sm" :src="'https://sell.ir'+product.image"></b-avatar>
               {{ product.title_fa }} <br>
               قیمت: {{product.oldPrice}} |
               دسته بندی: {{ product.cat }}
 
             </b-alert>
-            <b-alert v-else variant="danger" show>
+
+            <b-alert v-b-toggle v-else variant="danger" show>
               <b-avatar rounded="sm" :src="'https://sell.ir'+product.image"></b-avatar>
               {{ product.title_fa }} <br>
               قیمت: {{product.oldPrice}} |
               دسته بندی: {{ product.cat }}
 
             </b-alert>
+            <b-collapse accordion="my-accordion" id="accordion" class="mb-2">
+              <b-card>
+                <p class="card-text">{{ product.title_en }}</p>
+                <p class="card-text">{{ product.brand }}</p>
+                <p class="card-text">{{ product.stock }}</p>
+              </b-card>
+            </b-collapse>
           </span>
         
       </div>
     </div>
-  </div>
+
 </template>
 
 <script>
@@ -103,6 +110,7 @@ loading: {
   },
   data() {
     return {
+      visible: false,
       result: [{
         "title_fa": "گوشی موبایل اپل مدل  iPhone SE 2020 A2275 ظرفیت 64 گیگابایت",
         "title_en": "Apple iPhone SE 2020 A2275  64GB Mobile Phone",
@@ -398,24 +406,23 @@ loading: {
     },
     async getall() {
       this.loading = true;
-    //   for(let page=1;page < 18;page++){
-    //     this.productList.push((await this.$axios.get('https://www.all.ir/wp-json/askwp/v1/products?p='+ page)).data.products);
-    //     console.log('page number '+ page +' readed!');
-    //     console.log(this.productList);
 
-    //   }
-        
-    //   this.loading = false;
-    // console.log(this.all.length);
-      this.text = "url=" + this.url + "&page=" + this.pageNum + "&box=" + this.box + "&titleFa=" + this.titleFa + "&titleEn=" + this.titleEn + "&price=" + this.price
-                  + "&base=" + this.base + "&oldPrice=" + this.oldPrice + "&image=" + this.image + "&att=" + this.att + "&brand=" + this.brand + "&cat=" + this.cat
-                  + "&stock=" + this.stock + "&outof=ناموجود" + "&paging=" + this.paging
-      this.productList = (await this.$axios.get('http://localhost:8000?' + this.text)).data;
-      
-      this.loading = false;
+      this.text = "url=" + this.url + "&page=" + this.pageNum + "&box=" + this.box + "&titleFa=" + this.titleFa + "&titleEn=" + this.titleEn + "&price=" + this.price +
+        "&base=" + this.base + "&oldPrice=" + this.oldPrice + "&image=" + this.image + "&att=" + this.att + "&brand=" + this.brand + "&cat=" + this.cat +
+        "&stock=" + this.stock + "&outof=ناموجود" + "&paging=" + this.paging;
+      await this.$axios.get('http://localhost:8000?' + this.text).then(res => {
+          this.productList = res.data;
+          this.loading = false;
+        })
+        .catch(err => {
+          this.loading = false;
+          console.log(err);
+        });
+
+
     },
     del(){
-      this.all = {}
+      this.productList = {}
     }
   },
 

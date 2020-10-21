@@ -20,8 +20,10 @@
             </a>
             <div class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="#">پنل مدیریت</a>
-              <a class="dropdown-item" href="#">ویرایش پروفایل</a>
+              <nuxt-link class="dropdown-item" to="/getProducts">پنل بروزرسانی</nuxt-link>
+              <nuxt-link class="dropdown-item" to="/getApi">پنل API</nuxt-link>
               <div class="dropdown-divider" />
+              <a class="dropdown-item" href="#">ویرایش پروفایل</a>
               <a class="dropdown-item" href="#">خروج</a>
             </div>
           </li>

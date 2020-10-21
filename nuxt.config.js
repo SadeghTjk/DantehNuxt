@@ -64,5 +64,12 @@ export default {
   },
   router: {
     base: '/awk/'
-  }
+  },
+  auth: {
+    cookie: {
+        options: {
+            sameSite: 'lax',
+        },
+    },
+},
 }

@@ -1,95 +1,30 @@
 <template>
-  <div class="container">
-    <div class="row rtl p-5">
-      <div class="col-12">
-        <b-form @submit.prevent="getall" >
+        <div class="row rtl p-5">
+            <div class="col-12">
+              <button id="delete" type="submit" @click="del" class="mb-3">حذف</button>
+                <button id="all" type="submit" @click="getall" class="mb-3">دریافت از آل</button>
+                <!-- <button id="parse" type="submit" @click="update" class="mb-3">شروع</button> -->
+                <progress v-show="loading"></progress>
+                <span class="product-container" v-for="(products,index) in all" :key="index">
+                <span class="product-container" v-for="(product,index) in products" :key="index">
+                  <b-alert v-if="product.availability == 'instock'" variant="success" show>
+                    <b-avatar rounded="sm" :src="product.imageurl"></b-avatar> 
+                    {{ product.title1 }} <br>
+                    قیمت: {{product.price}} |
+                    دسته بندی: {{ product.catname }}
 
-          <b-form-group id="input-group-13" label="آدرس اصلی: " label-for="input-base">
-            <b-form-input id="input-base" type="url" required placeholder="آدرس اصلی سایت" v-model="base"></b-form-input>
-          </b-form-group>
+                  </b-alert>
+                  <b-alert v-else variant="danger" show>
+                    <b-avatar rounded="sm" :src="product.imageurl"></b-avatar> 
+                    {{ product.title1 }} <br>
+                    قیمت: {{product.price}} |
+                    دسته بندی: {{ product.catname }}
 
-          <b-form-group id="input-group-1" label="آدرس: " label-for="input-url">
-            <b-form-input id="input-url" type="url" required placeholder="آدرس گروه محصول" v-model="url"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-2" label="پیجینگ: " label-for="input-page">
-            <b-form-input id="input-page" type="text" placeholder="مثال پیجینگ" v-model="paging"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-14" label="تعداد صفحات: " label-for="input-pageNum">
-            <b-form-input id="input-pageNum" type="number" placeholder="تعداد صفحات گروه محصول" v-model="pageNum"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-8" label="باکس محصول: " label-for="input-box">
-            <b-form-input id="input-box" type="text" placeholder="سلکتور محصول" v-model="box"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-3" label="عنوان فارسی: " label-for="input-title-fa">
-            <b-form-input id="input-title-fa" type="text" placeholder="سلکتور عنوان فارسی" v-model="titleFa"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-4" label="عنوان انگلیسی: " label-for="input-title-en">
-            <b-form-input id="input-title-en" type="text" placeholder="سلکتور عنوان انگلیسی" v-model="titleEn"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-5" label="قیمت: " label-for="input-price">
-            <b-form-input id="input-price" type="text" placeholder="سلکتور قیمت" v-model="price"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-9" label="قیمت قبلی: " label-for="input-oldprice">
-            <b-form-input id="input-oldprice" type="text" placeholder="سلکتور قیمت قبلی" v-model="oldPrice"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-6" label="موجودی: " label-for="input-stock">
-            <b-form-input id="input-stock" type="text" placeholder="سلکتور موجودی" v-model="stock"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-10" label="کلمه ناموجود: " label-for="input-outof">
-            <b-form-input id="input-outof" type="text" placeholder="کلمه ناموجود" v-model="outof"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-11" label="عکس: " label-for="input-image">
-            <b-form-input id="input-image" type="text" placeholder="سلکتور عکس" v-model="image"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-12" label="اتربیوت عکس: " label-for="input-att">
-            <b-form-input id="input-att" type="text" placeholder="اتربیوت عکس" v-model="att"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-6" label="دسته بندی: " label-for="input-cat">
-            <b-form-input id="input-cat" type="text" placeholder="سلکتور دسته بندی" v-model="cat"></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-7" label="برند: " label-for="input-brand">
-            <b-form-input id="input-brand" type="text" placeholder="سلکتور برند" v-model="brand"></b-form-input>
-          </b-form-group>
-
-        <b-btn variant="success" id="all" type="submit" class="m-2 mb-4 px-4">دریـــافت</b-btn>
-        <b-btn variant="danger" id="delete" type="reset" @click="del" class="m-2 mb-4 px-3">حـــذف</b-btn>
-        
-        </b-form>
-        <!-- <button id="parse" type="submit" @click="update" class="mb-3">شروع</button> -->
-        <b-progress class="mb-3" :value="100" variant="info" striped animated v-show="loading"></b-progress>
-          <span class="product-container" v-for="(product,index) in productList" :key="index">
-            <b-alert v-if="product.stock == 'OutOfStock'" variant="success" show>
-              <b-avatar rounded="sm" :src="'https://sell.ir'+product.image"></b-avatar>
-              {{ product.title_fa }} <br>
-              قیمت: {{product.oldPrice}} |
-              دسته بندی: {{ product.cat }}
-
-            </b-alert>
-            <b-alert v-else variant="danger" show>
-              <b-avatar rounded="sm" :src="'https://sell.ir'+product.image"></b-avatar>
-              {{ product.title_fa }} <br>
-              قیمت: {{product.oldPrice}} |
-              دسته بندی: {{ product.cat }}
-
-            </b-alert>
-          </span>
-        
-      </div>
-    </div>
-  </div>
+                  </b-alert>
+                </span>
+                </span>
+            </div>
+        </div>
 </template>
 
 <script>
@@ -357,12 +292,18 @@ loading: {
         "stock": "OutOfStock"
       }],
       loading: false,
-      productList: [],
-      url: 'https://sell.ir/products-10/%DB%8C%D8%AE%DA%86%D8%A7%D9%84-%D9%81%D8%B1%DB%8C%D8%B2%D8%B1?page=',paging: '',box: '.product-box a',titleFa: 'h1.text-center-xs',titleEn: 'h2.text-center-xs',price: 'span.price-value',oldPrice: 'span.price-value',stock: '.inner-btn.btn-basket span',cat: 'ol.breadcrumb li:nth-child(5)',brand: '.star-gray a',base:'https://sell.ir', att:'src',image:'.product-main-image img',outof:'', pageNum: 2,
-      text: '',
+      ready: false,
+      aProduct: {},
+      loading: false,
+      all: [],
+      variant: "info",
     }
   },
   methods: {
+    async getProductList() {
+
+
+    },
     async update() {
       const query2 = new Parse.Query(Products);
       for (let index = 0; index < 8; index++) {
@@ -398,22 +339,16 @@ loading: {
     },
     async getall() {
       this.loading = true;
-    //   for(let page=1;page < 18;page++){
-    //     this.productList.push((await this.$axios.get('https://www.all.ir/wp-json/askwp/v1/products?p='+ page)).data.products);
-    //     console.log('page number '+ page +' readed!');
-    //     console.log(this.productList);
+      for(let page=1;page < 18;page++){
+        this.all.push((await this.$axios.get('https://www.all.ir/wp-json/askwp/v1/products?p='+ page)).data.products);
+        console.log('page number '+ page +' readed!');
+        console.log(this.all);
 
-    //   }
+      }
         
-    //   this.loading = false;
-    // console.log(this.all.length);
-      this.text = "url=" + this.url + "&page=" + this.pageNum + "&box=" + this.box + "&titleFa=" + this.titleFa + "&titleEn=" + this.titleEn + "&price=" + this.price
-                  + "&base=" + this.base + "&oldPrice=" + this.oldPrice + "&image=" + this.image + "&att=" + this.att + "&brand=" + this.brand + "&cat=" + this.cat
-                  + "&stock=" + this.stock + "&outof=ناموجود" + "&paging=" + this.paging
-      this.productList = (await this.$axios.get('http://localhost:8000?' + this.text)).data;
-      
       this.loading = false;
-    },
+    console.log(this.all.length);
+  },
     del(){
       this.all = {}
     }
